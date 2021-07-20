@@ -1,8 +1,10 @@
 # Java-Assignment
 
 # Technology:
-Spring Boot 2.5
-Java 1.8
+Spring Boot
+Spring JPA
+Spring REST
+Java
 REST Web Service
 Junit
 Mockito
