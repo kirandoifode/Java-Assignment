@@ -1,0 +1,22 @@
+<html xmlns:th="https://thymeleaf.org">    
+<div>
+    <table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>User Name</th>
+        <th>email</th>
+        <th>Title</th>
+        <th>Body</th>
+    </tr>
+    <tr th:each="user : ${userPosts}">
+        <td class="align-middle" th:text="${user.id}"></td>
+        <td class="align-middle" th:text="${user.name}"></td>
+        <td class="align-middle" th:text="${user.username}"></td>
+        <td class="align-middle" th:text="${user.email}"></td>
+        <td class="align-middle" th:text="${user.title}"></td>
+        <td class="align-middle" th:text="${user.body}"></td>
+    </tr>
+</table>
+</div>  
+</html>  
