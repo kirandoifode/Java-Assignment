@@ -7,8 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import org.springframework.lang.NonNull;
 
 @Entity
 public class Post implements Serializable{
@@ -20,11 +21,13 @@ public class Post implements Serializable{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	@Column
-	@NonNull
+	@NotNull(message = "Please enter user ID")
 	private Long userId;
 	@Column  
+	@NotBlank(message = "Title is mandatory")
     private String title;
-	@Column  
+	@Column 
+	@NotBlank(message = "Body is mandatory")
     private String body;
 	@Column  
     private boolean publish;

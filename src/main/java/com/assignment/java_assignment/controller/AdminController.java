@@ -2,6 +2,8 @@ package com.assignment.java_assignment.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +57,7 @@ public class AdminController {
 	 * @return
 	 */
 	@PostMapping(value = "/addPost")
-	public ResponseEntity<Post> savePost(@RequestBody Post post) {
+	public ResponseEntity<Post> savePost(@Valid @RequestBody Post post) {
 		LOGGER.debug("Entering /addPost endpoint for save post.");
 		try {
 			return new ResponseEntity<>(adminService.savePost(post), HttpStatus.CREATED);

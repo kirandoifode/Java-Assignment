@@ -25,6 +25,10 @@ import com.assignment.java_assignment.model.UserPosts;
 import com.assignment.java_assignment.service.AdminService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author kiran doifode
+ *
+ */
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = AdminController.class)
 public class AdminControllerTest {
@@ -62,9 +66,42 @@ public class AdminControllerTest {
 
 		Mockito.when(adminService.savePost(ArgumentMatchers.any())).thenReturn(postObj);
 		String json = mapper.writeValueAsString(postObj);
-		mockMvc.perform(post("/api/addPost").contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
-				.content(json).accept(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
+		mockMvc.perform(post("/api/addPost")
+				.contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
+				.content(json).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated())
 				.andExpect(MockMvcResultMatchers.jsonPath("$.body").value("Body post"));
+	}
+	
+	@Test
+	public void testTitleAndBodyMustNotBeBlank_Success() throws Exception {
+		Post postObj = new Post();
+		postObj.setId(1L);
+		postObj.setUserId(1L);
+		postObj.setTitle("");
+		postObj.setBody("Body post");
+		postObj.setPublish(false);
+
+		mockMvc.perform(post("/api/addPost")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(postObj)))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testTitleAndBodyMustNotBeBlank_Failed() throws Exception {
+		// Pass this test post null/empty value in UserId, Title or Body.
+		Post postObj = new Post();
+		postObj.setId(1L);
+		postObj.setUserId(1L);
+		postObj.setTitle("Title test");
+		postObj.setBody("Body test");
+		postObj.setPublish(false);
+
+		mockMvc.perform(post("/api/addPost")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(postObj)))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -86,7 +123,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void testShould_Return404Exception_thenSucceeds() throws Exception {
+	public void testShould_Return404Exception_Success() throws Exception {
 		mockMvc.perform(get("/simple").contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(404));
 	}
 
