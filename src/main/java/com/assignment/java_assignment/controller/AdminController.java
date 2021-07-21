@@ -3,8 +3,6 @@ package com.assignment.java_assignment.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,14 +57,9 @@ public class AdminController {
 	 * @return
 	 */
 	@PostMapping(value = "/addPost")
-	public ResponseEntity<Post> savePost(@Valid @RequestBody Post post) {
+	public ResponseEntity<Post> savePost(@RequestBody Post post) {
 		LOGGER.debug("Entering /addPost endpoint for save post.");
-		try {
-			return new ResponseEntity<>(adminService.savePost(post), HttpStatus.CREATED);
-		} catch (Exception e) {
-			LOGGER.error("Error occurred during addPost request processing. ", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(adminService.savePost(post), HttpStatus.CREATED);
 	}
 
 	/**
@@ -77,7 +70,7 @@ public class AdminController {
 		LOGGER.debug("Entering /viewAllPost endpoint to veiw all post.");
 		try {
 			List<Post> postList = adminService.findAllPost();
-			
+
 			if (postList.isEmpty() || postList.size() == 0) {
 				LOGGER.warn(+postList.size() + " records found for allUsersPosts request.");
 				return new ResponseEntity<List<Post>>(postList, HttpStatus.NO_CONTENT);
@@ -89,56 +82,42 @@ public class AdminController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
 	@GetMapping(value = "/viewPostByUserId/{id}")
 	public ResponseEntity<List<Post>> findPostByUserId(@PathVariable("id") long userId) {
-		System.out.println("USER IS = "+userId);
 		LOGGER.debug("Entering /viewPostByUserId/{id} endpoint to veiw post by UserId.");
-		try {
-			Optional<List<Post>> postData = adminService.findbyUserId(userId);
-			
-			if (postData.isPresent()) {
-				LOGGER.warn("Post found by userId "+userId);
-				return new ResponseEntity<>(postData.get(), HttpStatus.OK);
-			} else {
-				LOGGER.warn("Post not found by userId "+userId);
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			
-		} catch (Exception e) {
-			LOGGER.error("Error occurred during request processing. ", e);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+		Optional<List<Post>> postData = adminService.findbyUserId(userId);
+
+		if (postData.isPresent()) {
+			LOGGER.warn(postData.get().size() + " - " + "Post found by userId " + userId);
+			return new ResponseEntity<>(postData.get(), HttpStatus.OK);
+		} else {
+			LOGGER.warn("Post not found by userId " + userId);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+
 	}
-	
+
 	@GetMapping(value = "/viewAllAuditedPost/{audited}")
 	public ResponseEntity<List<Post>> findAuditedPosts(@PathVariable("audited") boolean audited) {
-		System.out.println("Post Audited = "+audited);
 		LOGGER.debug("Entering /viewAllAuditedPost/{audited} endpoint to veiw audited post.");
-		try {
-			Optional<List<Post>> postData = adminService.findAllAuditedPost(audited);
-			
-			if (postData.isPresent()) {
-				LOGGER.warn("Audited Post(s) found "+postData.get().size());
-				return new ResponseEntity<>(postData.get(), HttpStatus.OK);
-			} else {
-				LOGGER.warn("Audited post(s) not found "+postData.get().size());
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			}
-			
-		} catch (Exception e) {
-			LOGGER.error("Error occurred during request processing. ", e);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		Optional<List<Post>> postData = adminService.findAllAuditedPost(audited);
+
+		if (postData.isPresent()) {
+			LOGGER.warn(postData.get().size() + " - " + "Audited Post(s) found " + postData.get().size());
+			return new ResponseEntity<>(postData.get(), HttpStatus.OK);
+		} else {
+			LOGGER.warn("Audited post(s) not found " + postData.get().size());
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
-	
 
 	/**
-	 * @return
-	 * You can use this end point for view all users posts on Browser..
+	 * @return You can use this end point for view all users posts on Browser..
 	 */
 	@GetMapping(value = "/getUsersPostView")
 	public ModelAndView getUsersPostDetails() {

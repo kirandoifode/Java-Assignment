@@ -90,16 +90,4 @@ public class JavaAssignmentApplicationIntegrationTest {
 				.size() == 45);
 	}
 	
-	@Test
-	public void testShouldReturnConsolidatedAllUsersPosts1() throws Exception {
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/viewAllAuditedPost/true", List.class)
-				.size() == 12);
-	}
-	
-	@Test
-	public void testShouldReturnConsolidatedAllUsersPosts2() throws Exception {
-		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/viewPostByUserId/11", List.class)
-				.size() == 24);
-	}
-	
 }

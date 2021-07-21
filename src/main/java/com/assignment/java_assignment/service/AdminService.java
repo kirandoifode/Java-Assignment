@@ -10,17 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.assignment.java_assignment.exception.EmptyInputFieldException;
+import com.assignment.java_assignment.exception.RecordNotFoundException;
 import com.assignment.java_assignment.model.Post;
 import com.assignment.java_assignment.model.User;
 import com.assignment.java_assignment.model.UserPosts;
 import com.assignment.java_assignment.repository.AdminRepository;
 
 @Service
-public class AdminService{
+public class AdminService {
 
 	@Autowired
 	private AdminRepository userRepository;
-	
+
 	RestTemplate restTemplate = new RestTemplate();
 
 	public List<UserPosts> getAllUserPosts() {
@@ -28,9 +30,8 @@ public class AdminService{
 		User[] usersArr = (User[]) restTemplate.getForObject("https://jsonplaceholder.typicode.com/users",
 				User[].class);
 		List<User> users = Arrays.stream(usersArr).collect(Collectors.toList());
-		
-		Post[] postArr = (Post[]) restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts",
-				Post[].class);
+
+		Post[] postArr = (Post[]) restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts", Post[].class);
 		List<Post> posts = Arrays.stream(postArr).collect(Collectors.toList());
 
 		if (posts != null && users != null) {
@@ -46,22 +47,33 @@ public class AdminService{
 		}
 		return userPostsList;
 	}
-	
+
 	public Post savePost(Post post) {
+		if (post.getUserId() == null && post.getTitle().isEmpty()
+				|| post.getTitle().length() == 0 && post.getBody().isEmpty() || post.getBody().length() == 0) {
+			throw new EmptyInputFieldException(
+					"Input field(s) is empty. Please note UserId, Title and Body fields are mandatory.");
+		}
 		return userRepository.save(post);
 	}
-	
+
 	public List<Post> findAllPost() {
 		return (List<Post>) userRepository.findAll();
 	}
-	
+
 	public Optional<List<Post>> findbyUserId(long userId) {
-		List<Post> postList = (List<Post>)userRepository.findByUserId(userId);
+		List<Post> postList = (List<Post>) userRepository.findByUserId(userId);
+		if (postList.isEmpty() || postList.size() == 0) {
+			throw new RecordNotFoundException("UserId " + userId + " posts do not exist.");
+		}
 		return Optional.ofNullable(postList);
 	}
-	
+
 	public Optional<List<Post>> findAllAuditedPost(boolean audited) {
-		List<Post> postList = (List<Post>)userRepository.findAllAuditedPosts(audited);
+		List<Post> postList = (List<Post>) userRepository.findAllAuditedPosts(audited);
+		if (postList.isEmpty() || postList.size() == 0) {
+			throw new RecordNotFoundException("Audited posts do not exist.");
+		}
 		return Optional.ofNullable(postList);
 	}
 }

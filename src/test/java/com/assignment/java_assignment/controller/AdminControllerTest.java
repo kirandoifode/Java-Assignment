@@ -70,27 +70,6 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	public void testUserId_TitleOrBodyMustNotBeBlank_Success() throws Exception {
-		final Post postObj = new Post(1L, 1L, "", "Body test", false);
-
-		mockMvc.perform(post("/api/addPost")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(postObj)))
-				.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void testTitleAndBodyMustNotBeBlank_Failed() throws Exception {
-		// To pass this test post's UserId, Title or Body must be null/empty.
-		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
-		
-		mockMvc.perform(post("/api/addPost")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(postObj)))
-				.andExpect(status().isBadRequest());
-	}
-
-	@Test
 	public void testShouldFetchAllPostsFromDB_Success() throws Exception {
 		Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
 
@@ -138,9 +117,10 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	public void testShould_Return500Exception_Success() throws Exception {
-		mockMvc.perform(get("/api/viewAllAuditedPost/false").contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().is(500));
+	public void testShould_ReturnEmptyListOfPost_Success() throws Exception {
+		Optional<List<Post>> posts = adminService.findAllAuditedPost(true);
+
+		assertThat(posts).isEmpty();
 	}
 	
 	@Test
