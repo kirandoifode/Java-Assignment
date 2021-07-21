@@ -75,12 +75,7 @@ public class AdminControllerTest {
 	
 	@Test
 	public void testTitleAndBodyMustNotBeBlank_Success() throws Exception {
-		Post postObj = new Post();
-		postObj.setId(1L);
-		postObj.setUserId(1L);
-		postObj.setTitle("");
-		postObj.setBody("Body post");
-		postObj.setPublish(false);
+		final Post postObj = new Post(1L, 1L, "", "Body test", false);
 
 		mockMvc.perform(post("/api/addPost")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -91,13 +86,8 @@ public class AdminControllerTest {
 	@Test
 	public void testTitleAndBodyMustNotBeBlank_Failed() throws Exception {
 		// Pass this test post null/empty value in UserId, Title or Body.
-		Post postObj = new Post();
-		postObj.setId(1L);
-		postObj.setUserId(1L);
-		postObj.setTitle("Title test");
-		postObj.setBody("Body test");
-		postObj.setPublish(false);
-
+		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
+		
 		mockMvc.perform(post("/api/addPost")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(postObj)))
@@ -106,12 +96,7 @@ public class AdminControllerTest {
 
 	@Test
 	public void testShouldFetchAllPostsFromDB() throws Exception {
-		Post postObj = new Post();
-		postObj.setId(1L);
-		postObj.setUserId(1L);
-		postObj.setTitle("Title test");
-		postObj.setBody("Body test");
-		postObj.setPublish(false);
+		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
 
 		List<Post> employeeList = new ArrayList<>();
 		employeeList.add(postObj);
