@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -60,6 +61,52 @@ public class AdminServiceTest {
 
 		assertThat(expected.size()).isEqualTo(100);
 		assertThat(expected.get(0).getUsername()).isEqualTo("Bret");
+	}
+	
+	@Test
+	void shouldReturnAllPostByUserID() {
+		List<Post> posts = new ArrayList<Post>();
+		posts.add(new Post(1L, 11L, "Title test1", "Body test1", false));
+		posts.add(new Post(2L, 11L, "Title test2", "Body test2", false));
+		final long userId= 11L;
+		given(adminRepository.findByUserId(userId)).willReturn(posts);
+
+		Optional<List<Post>> expected = adminService.findbyUserId(userId);
+
+		assertEquals(expected.get(), posts);
+	}
+	
+	@Test
+	void shouldReturnAllPostsWhichAudited_True() {
+		List<Post> posts = new ArrayList<Post>();
+		posts.add(new Post(1L, 11L, "Title test1", "Body test1", true));
+		posts.add(new Post(2L, 11L, "Title test2", "Body test2", true));
+		final boolean audited= true;
+		given(adminRepository.findAllAuditedPosts(audited)).willReturn(posts);
+
+		Optional<List<Post>> expected = adminService.findAllAuditedPost(audited);
+
+		assertEquals(expected.get(), posts);
+	}
+
+	@Test
+	public void testShouldFindNoPosts_If_Repository_Is_Empty() {
+		Iterable<Post> posts = adminRepository.findAll();
+
+		assertThat(posts).isEmpty();
+	}
+	
+	@Test
+	public void testShouldFindNoAuditedPostsByAudited_If_Repository_Is_Empty() {
+		Iterable<Post> posts = adminRepository.findAllAuditedPosts(true);
+
+		assertThat(posts).isEmpty();
+	}
+	
+	@Test
+	public void testShouldFindNoPostsByUserID_If_Repository_Is_Empty() {
+		Iterable<Post> posts = adminRepository.findByUserId(101L);
+		assertThat(posts).isEmpty();
 	}
 
 }

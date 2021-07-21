@@ -3,6 +3,7 @@ package com.assignment.java_assignment.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class AdminService{
 		User[] usersArr = (User[]) restTemplate.getForObject("https://jsonplaceholder.typicode.com/users",
 				User[].class);
 		List<User> users = Arrays.stream(usersArr).collect(Collectors.toList());
-
+		
 		Post[] postArr = (Post[]) restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts",
 				Post[].class);
 		List<Post> posts = Arrays.stream(postArr).collect(Collectors.toList());
@@ -54,4 +55,13 @@ public class AdminService{
 		return (List<Post>) userRepository.findAll();
 	}
 	
+	public Optional<List<Post>> findbyUserId(long userId) {
+		List<Post> postList = (List<Post>)userRepository.findByUserId(userId);
+		return Optional.ofNullable(postList);
+	}
+	
+	public Optional<List<Post>> findAllAuditedPost(boolean audited) {
+		List<Post> postList = (List<Post>)userRepository.findAllAuditedPosts(audited);
+		return Optional.ofNullable(postList);
+	}
 }

@@ -55,7 +55,7 @@ public class JavaAssignmentApplicationIntegrationTest {
 		postObj.setUserId(1L);
 		postObj.setTitle("Title post");
 		postObj.setBody("Body post");
-		postObj.setPublish(false);
+		postObj.setAudited(false);
 		
 		String json = mapper.writeValueAsString(postObj);
 		mockMvc.perform(post("/api/addPost").contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -87,6 +87,19 @@ public class JavaAssignmentApplicationIntegrationTest {
 	@Test
 	public void testShouldReturnConsolidatedAllUsersPosts() throws Exception {
 		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/allUsersPosts", List.class)
-				.size() == 100);
+				.size() == 45);
 	}
+	
+	@Test
+	public void testShouldReturnConsolidatedAllUsersPosts1() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/viewAllAuditedPost/true", List.class)
+				.size() == 12);
+	}
+	
+	@Test
+	public void testShouldReturnConsolidatedAllUsersPosts2() throws Exception {
+		assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/api/viewPostByUserId/11", List.class)
+				.size() == 24);
+	}
+	
 }

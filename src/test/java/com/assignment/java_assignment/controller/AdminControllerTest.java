@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,7 @@ public class AdminControllerTest {
 	private AdminService adminService;
 
 	@Test
-	public void testShouldFetchAllUsersPostsDeatailFromAPI_User_Post() throws Exception {
+	public void testShouldFetchAllUsersPostsFrom_User_Post_API_Success() throws Exception {
 		List<UserPosts> postList = new ArrayList<UserPosts>();
 		postList.add(new UserPosts(1L, "Leanne Graham", "Bret", "Sincere@april.biz",
 				"sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
@@ -56,13 +57,8 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	public void testshould_SaveNewPostInDB() throws Exception {
-		Post postObj = new Post();
-		postObj.setId(1L);
-		postObj.setUserId(1L);
-		postObj.setTitle("Title post");
-		postObj.setBody("Body post");
-		postObj.setPublish(false);
+	public void testShould_SaveNewPostInDB_Success() throws Exception {
+		Post postObj = new Post(1L, 1L, "Title Post", "Body post", false);
 
 		Mockito.when(adminService.savePost(ArgumentMatchers.any())).thenReturn(postObj);
 		String json = mapper.writeValueAsString(postObj);
@@ -74,7 +70,7 @@ public class AdminControllerTest {
 	}
 	
 	@Test
-	public void testTitleAndBodyMustNotBeBlank_Success() throws Exception {
+	public void testUserId_TitleOrBodyMustNotBeBlank_Success() throws Exception {
 		final Post postObj = new Post(1L, 1L, "", "Body test", false);
 
 		mockMvc.perform(post("/api/addPost")
@@ -85,7 +81,7 @@ public class AdminControllerTest {
 	
 	@Test
 	public void testTitleAndBodyMustNotBeBlank_Failed() throws Exception {
-		// Pass this test post null/empty value in UserId, Title or Body.
+		// To pass this test post's UserId, Title or Body must be null/empty.
 		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
 		
 		mockMvc.perform(post("/api/addPost")
@@ -95,21 +91,63 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void testShouldFetchAllPostsFromDB() throws Exception {
-		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
+	public void testShouldFetchAllPostsFromDB_Success() throws Exception {
+		Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
 
-		List<Post> employeeList = new ArrayList<>();
-		employeeList.add(postObj);
+		List<Post> postList = new ArrayList<>();
+		postList.add(postObj);
 
-		given(adminService.findAllPost()).willReturn(employeeList);
+		given(adminService.findAllPost()).willReturn(postList);
 
 		this.mockMvc.perform(get("/api/viewAllPost")).andExpect(status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$[0].body").value("Body test"));
 	}
+	
+	@Test
+	public void testShouldFetchAllPostsByUserID_Success() throws Exception {
+		Post postObj = new Post(1L, 101L, "Title test1", "Body test1", false);
+		final long userId= 101L;
+		List<Post> postList = new ArrayList<>();
+		postList.add(postObj);
+		
+		given(adminService.findbyUserId(userId)).willReturn(
+				Optional.ofNullable(postList));
+
+		this.mockMvc.perform(get("/api/viewPostByUserId/101")).andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].body").value("Body test1"));
+	}
+	
+	@Test
+	public void testShouldFetchAllAuditedPosts_True_Success() throws Exception {
+		Post postObj = new Post(1L, 101L, "Title test1", "Body test1", true);
+		final boolean audited= true;
+		List<Post> postList = new ArrayList<>();
+		postList.add(postObj);
+		
+		given(adminService.findAllAuditedPost(audited)).willReturn(
+				Optional.ofNullable(postList));
+
+		this.mockMvc.perform(get("/api/viewAllAuditedPost/true")).andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$[0].body").value("Body test1"));
+	}
 
 	@Test
 	public void testShould_Return404Exception_Success() throws Exception {
-		mockMvc.perform(get("/simple").contentType(MediaType.APPLICATION_JSON)).andExpect(status().is(404));
+		mockMvc.perform(get("/simple").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().is(404));
+	}
+	
+	@Test
+	public void testShould_Return500Exception_Success() throws Exception {
+		mockMvc.perform(get("/api/viewAllAuditedPost/false").contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().is(500));
+	}
+	
+	@Test
+	public void testShouldFindNoPosts_If_Repository_Is_Empty_Success() {
+		Iterable<Post> posts = adminService.findAllPost();
+
+		assertThat(posts).isEmpty();
 	}
 
 }

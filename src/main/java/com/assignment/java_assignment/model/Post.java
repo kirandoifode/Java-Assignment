@@ -30,17 +30,17 @@ public class Post implements Serializable{
 	@NotBlank(message = "Body is mandatory")
     private String body;
 	@Column  
-    private boolean publish;
+    private boolean audited;
 	
     public Post() {}
 
-	public Post(Long id, Long userId, String title, String body, boolean publish) {
+	public Post(Long id, Long userId, String title, String body, boolean audited) {
 		super();
 		this.id = id;
 		this.userId = userId;
 		this.title = title;
 		this.body = body;
-		this.publish = publish;
+		this.audited = audited;
 	}
 
 	public Long getId() {
@@ -75,17 +75,17 @@ public class Post implements Serializable{
 		this.body = body;
 	}
 
-	public boolean isPublish() {
-		return publish;
+	public boolean isAudited() {
+		return audited;
 	}
 
-	public void setPublish(boolean publish) {
-		this.publish = publish;
+	public void setAudited(boolean audited) {
+		this.audited = audited;
 	}
 
 	@Override
 	public String toString() {
-		return "Post [id=" + id + ", userId=" + userId + ", title=" + title + ", body=" + body + ", publish=" + publish
+		return "Post [id=" + id + ", userId=" + userId + ", title=" + title + ", body=" + body + ", audited=" + audited
 				+ "]";
 	}
     

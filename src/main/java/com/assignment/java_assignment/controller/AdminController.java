@@ -1,6 +1,7 @@
 package com.assignment.java_assignment.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +39,7 @@ public class AdminController {
 	 */
 	@GetMapping(value = "/allUsersPosts")
 	public ResponseEntity<List<UserPosts>> getUsersPosts() {
-		LOGGER.debug("Entering /allUsersPosts endpoint for view all users posts.");
+		LOGGER.debug("Entering /allUsersPosts endpoint for view all users related posts.");
 		try {
 			List<UserPosts> userPostsList = adminService.getAllUserPosts();
 
@@ -87,6 +89,52 @@ public class AdminController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	/**
+	 * @return
+	 */
+	@GetMapping(value = "/viewPostByUserId/{id}")
+	public ResponseEntity<List<Post>> findPostByUserId(@PathVariable("id") long userId) {
+		System.out.println("USER IS = "+userId);
+		LOGGER.debug("Entering /viewPostByUserId/{id} endpoint to veiw post by UserId.");
+		try {
+			Optional<List<Post>> postData = adminService.findbyUserId(userId);
+			
+			if (postData.isPresent()) {
+				LOGGER.warn("Post found by userId "+userId);
+				return new ResponseEntity<>(postData.get(), HttpStatus.OK);
+			} else {
+				LOGGER.warn("Post not found by userId "+userId);
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("Error occurred during request processing. ", e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping(value = "/viewAllAuditedPost/{audited}")
+	public ResponseEntity<List<Post>> findAuditedPosts(@PathVariable("audited") boolean audited) {
+		System.out.println("Post Audited = "+audited);
+		LOGGER.debug("Entering /viewAllAuditedPost/{audited} endpoint to veiw audited post.");
+		try {
+			Optional<List<Post>> postData = adminService.findAllAuditedPost(audited);
+			
+			if (postData.isPresent()) {
+				LOGGER.warn("Audited Post(s) found "+postData.get().size());
+				return new ResponseEntity<>(postData.get(), HttpStatus.OK);
+			} else {
+				LOGGER.warn("Audited post(s) not found "+postData.get().size());
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("Error occurred during request processing. ", e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 
 	/**
 	 * @return
