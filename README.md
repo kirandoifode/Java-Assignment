@@ -1,12 +1,12 @@
 # Java-Assignment
 
 # Technology:
-Spring Boot 2.5
-Spring Data JPA
-Java 1.8
-In Memory DB – H2
-REST Web Service
-Junit
+Spring Boot 2.5,
+Spring Data JPA,
+Java 1.8,
+In Memory DB – H2,
+REST Web Service,
+Junit,
 Mockito
 
 # How to run application:
@@ -22,7 +22,11 @@ Mockito
 
 •	A: API used for add new post to in memory DB and #B: API for fetch all posts details from db.
 
+This http://localhost:8080/api/viewPostByUserId/{id} Api used for fetching all posts by User Id.
+This http://localhost:8080/api/viewAllAuditedPost/{audited} Api used for fetching all posts by audited flag - True/False.
+
 # How to run Test Cases:
-•	There are two main Test Cases for this application.
+•	There are three main Test Cases for this application.
 •	JavaAssignmentApplicationIntegrationTest this file having application integration test.
 •	AdminControllerTest is having Junit test cases for all API’s.
+•	AdminServiceTest is having Junit test cases for all API’s.
