@@ -1,18 +1,18 @@
 package com.assignment.java_assignment.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.assignment.java_assignment.model.Post;
@@ -29,10 +29,10 @@ public class AdminServiceTest {
 	private AdminService adminService;
 
 	@Test
-	void shouldSavedUserSuccessFully() {
+	void tesyShouldSavedPostSuccessFully() {
 		final Post postObj = new Post(1L, 1L, "Title test", "Body test", false);
 
-		given(adminRepository.save(postObj)).willAnswer(invocation -> invocation.getArgument(0));
+		when(adminRepository.save(Mockito.any(Post.class))).thenReturn(postObj);
 		Post savedPost = adminService.savePost(postObj);
 
 		assertThat(savedPost).isNotNull();
@@ -45,7 +45,7 @@ public class AdminServiceTest {
 		posts.add(new Post(2L, 1L, "Title test2", "Body test2", false));
 		posts.add(new Post(3L, 1L, "Title test3", "Body test3", false));
 
-		given(adminRepository.findAll()).willReturn(posts);
+		when(adminRepository.findAll()).thenReturn(posts);
 
 		List<Post> expected = adminService.findAllPost();
 
@@ -55,7 +55,7 @@ public class AdminServiceTest {
 	@Test
 	void shouldReturnFindAllUserPosts() {
 		List<UserPosts> posts = new ArrayList<UserPosts>();
-		given(adminService.getAllUserPosts()).willReturn(posts);
+		when(adminService.getAllUserPosts()).thenReturn(posts);
 
 		List<UserPosts> expected = adminService.getAllUserPosts();
 
@@ -69,7 +69,7 @@ public class AdminServiceTest {
 		posts.add(new Post(1L, 11L, "Title test1", "Body test1", false));
 		posts.add(new Post(2L, 11L, "Title test2", "Body test2", false));
 		final long userId= 11L;
-		given(adminRepository.findByUserId(userId)).willReturn(posts);
+		when(adminRepository.findByUserId(userId)).thenReturn(posts);
 
 		Optional<List<Post>> expected = adminService.findbyUserId(userId);
 
@@ -82,7 +82,7 @@ public class AdminServiceTest {
 		posts.add(new Post(1L, 11L, "Title test1", "Body test1", true));
 		posts.add(new Post(2L, 11L, "Title test2", "Body test2", true));
 		final boolean audited= true;
-		given(adminRepository.findAllAuditedPosts(audited)).willReturn(posts);
+		when(adminRepository.findAllAuditedPosts(audited)).thenReturn(posts);
 
 		Optional<List<Post>> expected = adminService.findAllAuditedPost(audited);
 

@@ -33,7 +33,11 @@ public class AdminController {
 	private AdminService adminService;
 
 	/**
-	 * @return
+	 * This method returns all user information with their related posts from GET -
+	 * /users & /posts so that Admin can track in one place what users are posting
+	 * to the site.
+	 * 
+	 * @return List<UserPosts>
 	 */
 	@GetMapping(value = "/allUsersPosts")
 	public ResponseEntity<List<UserPosts>> getUsersPosts() {
@@ -54,7 +58,10 @@ public class AdminController {
 	}
 
 	/**
-	 * @return
+	 * Using this method Admin create post on behalf of a user. Audited flag is used
+	 * for Audit purpose. FALSE value for not yet audited.
+	 * 
+	 * @return Post object.
 	 */
 	@PostMapping(value = "/addPost")
 	public ResponseEntity<Post> savePost(@RequestBody Post post) {
