@@ -15,7 +15,7 @@ Mockito
 •	1st Requirement use http://localhost:8080/api/allUsersPosts this API which will give you all user’s posts consolidated information.
 
 •	2nd requirement use below API’s:
-•	#A: http://localhost:8080/api/addPost
+•	#A: http://localhost:8080/api/addPost+
 •	Request Body: {"title":"Title man","body":"Desc man","userId":1,"publish":false}
 
 •	#B: http://localhost:8080/api/viewAllPost
