@@ -45,6 +45,22 @@ public class AdminService {
 				}
 			}
 		}
+
+		// Above loop covert in java8
+		if (posts != null && users != null) {
+			List<UserPosts> userPostsList1 = users.stream()
+					.flatMap(user -> posts.stream()
+							.filter(post -> user.getId() == post.getUserId())
+							.map(post -> new UserPosts(
+									user.getId(),
+									user.getName(),
+									user.getUsername(),
+									user.getEmail(),
+									post.getTitle(),
+									post.getBody()
+							))
+					).collect(Collectors.toList());
+		}
 		return userPostsList;
 	}
 
